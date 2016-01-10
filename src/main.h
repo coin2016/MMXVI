@@ -1615,6 +1615,8 @@ public:
     // (memory only) pointer to the index of the *active* successor of this block
     CBlockIndex* pnext;
 
+    int64_t nMoneySupply;
+
     // height of the entry in the chain. The genesis block has height 0
     int nHeight;
 
@@ -1661,6 +1663,7 @@ public:
         nTx = 0;
         nChainTx = 0;
         nStatus = 0;
+        nMoneySupply = 0;
 
         nVersion       = 0;
         hashMerkleRoot = 0;
@@ -1682,6 +1685,7 @@ public:
         nTx = 0;
         nChainTx = 0;
         nStatus = 0;
+        nMoneySupply = 0;
 
         nVersion       = block.nVersion;
         hashMerkleRoot = block.hashMerkleRoot;
@@ -1791,8 +1795,8 @@ public:
 
     std::string ToString() const
     {
-        return strprintf("CBlockIndex(pprev=%p, pnext=%p, nHeight=%d, merkle=%s, hashBlock=%s)",
-            pprev, pnext, nHeight,
+        return strprintf("CBlockIndex(pprev=%p, pnext=%p, nHeight=%d, merkle=%s, hashBlock=%s nMoneySupply=%s;)",
+            pprev, pnext, nHeight, nMoneySupply,
             hashMerkleRoot.ToString().c_str(),
             GetBlockHash().ToString().c_str());
     }
@@ -1840,6 +1844,7 @@ public:
         READWRITE(VARINT(nHeight));
         READWRITE(VARINT(nStatus));
         READWRITE(VARINT(nTx));
+        READWRITE(nMoneySupply);
         if (nStatus & (BLOCK_HAVE_DATA | BLOCK_HAVE_UNDO))
             READWRITE(VARINT(nFile));
         if (nStatus & BLOCK_HAVE_DATA)
