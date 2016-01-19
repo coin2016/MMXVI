@@ -1105,6 +1105,8 @@ int64 static GetBlockSubsidy(int nHeight){
 	if (nHeight < 50)
 		nSubsidy = 1 * COIN; // anti-instamine
 	
+	if (nHeight > 46000)
+		nSubsidy = 5 * COIN;
 	return nSubsidy;
 }
 
@@ -1737,8 +1739,6 @@ bool CBlock::ConnectBlock(CValidationState &state, CBlockIndex* pindex, CCoinsVi
 
     if (vtx[0].GetValueOut() > GetBlockValue(pindex->nHeight, nFees, pindex->nBits))
         return state.DoS(100, error("ConnectBlock() : coinbase pays too much (actual=%"PRI64d" vs limit=%"PRI64d")", vtx[0].GetValueOut(), GetBlockValue(pindex->nHeight, nFees, pindex->nBits)));
-    // track money supply 
-    pindex->nMoneySupply = (pindex->pprev? pindex->pprev->nMoneySupply : 0) + vtx[0].GetValueOut();
 
     if (!control.Wait())
         return state.DoS(100, false);
