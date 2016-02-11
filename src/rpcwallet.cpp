@@ -76,7 +76,7 @@ Value getinfo(const Array& params, bool fHelp)
     obj.push_back(Pair("balance",       ValueFromAmount(pwalletMain->GetBalance())));
     obj.push_back(Pair("blocks",        (int)nBestHeight));
     obj.push_back(Pair("timeoffset",    (boost::int64_t)GetTimeOffset()));
-	obj.push_back(Pair("moneysupply",   ValueFromAmount(pindexBest->nMoneySupply)));
+    obj.push_back(Pair("moneysupply",   ValueFromAmount(pindexBest->nMoneySupply)));
     obj.push_back(Pair("connections",   (int)vNodes.size()));
     obj.push_back(Pair("proxy",         (proxy.first.IsValid() ? proxy.first.ToStringIPPort() : string())));
     obj.push_back(Pair("difficulty",    (double)GetDifficulty()));
@@ -1570,4 +1570,27 @@ Value listlockunspent(const Array& params, bool fHelp)
 
     return ret;
 }
+
+Value makekeypair(const Array& params, bool fHelp)
+{
+    if (fHelp || params.size() > 1)
+        throw runtime_error(
+            "makekeypair [prefix]\n"
+            "Make a public/private key pair.\n"
+            "[prefix] is optional preferred prefix for the public key.\n");
+
+    string strPrefix = "";
+    if (params.size() > 0)
+        strPrefix = params[0].get_str();
+ 
+    CKey key;
+    key.MakeNewKey(false);
+
+    CPrivKey vchPrivKey = key.GetPrivKey();
+    Object result;
+    result.push_back(Pair("PrivateKey", HexStr<CPrivKey::iterator>(vchPrivKey.begin(), vchPrivKey.end())));
+    result.push_back(Pair("PublicKey", HexStr(key.GetPubKey().Raw())));
+    return result;
+}
+
 
