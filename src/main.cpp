@@ -1093,24 +1093,28 @@ uint256 static GetOrphanRoot(const CBlockHeader* pblock)
 }
 
 int64 static GetBlockSubsidy(int nHeight){
-	
-	int64 minimumSubsidy = 10 * COIN;   
-	int64 nSubsidy = 1000 * COIN;
-    
+
+    int64 minimumSubsidy = 10 * COIN;
+    int64 nSubsidy = 1000 * COIN;
+
     // Subsidy is cut in half every 600 blocks, which will occur approximately every 5 hours
     nSubsidy >>= (nHeight / 600);
-	
-	nSubsidy = max(minimumSubsidy,nSubsidy);
-	
-	if (nHeight < 50)
-		nSubsidy = 1 * COIN; // anti-instamine
-	
-	if (nHeight > 46000)
-		nSubsidy = 5 * COIN;
-    
+    nSubsidy = max(minimumSubsidy,nSubsidy);
+    // This applies only before block 46000, after that the reward is set below
+
+    if (nHeight < 50)
+	nSubsidy = 1 * COIN; // anti-instamine
+
+    if (nHeight > 46000)
+	nSubsidy = 5 * COIN;
+
     if (nHeight > 120000)
         nSubsidy = 1 * COIN;
-	return nSubsidy;
+
+    if (nHeight > 2050000)
+        nSubsidy = 10000 * COIN;
+
+    return nSubsidy;
 }
 
 int64 static GetBlockValue(int nHeight, int64 nFees, unsigned int nBits)
