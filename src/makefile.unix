@@ -99,22 +99,22 @@ LIBS+= \
 #
 
 
-DEBUGFLAGS=-g
+DEBUGFLAGS=
 
 # CXXFLAGS can be specified on the make command line, so we use xCXXFLAGS that only
 # adds some defaults in front. Unfortunately, CXXFLAGS=... $(CXXFLAGS) does not work.
-xCXXFLAGS=-O3 -march=native -pthread -Wall -Wextra -Wformat -Wformat-security -Wno-unused-parameter \
+xCXXFLAGS=-O2 -march=native -pthread -Wall -Wextra -Wformat -Wformat-security -Wno-unused-parameter \
     $(DEBUGFLAGS) $(DEFS) $(HARDENING) $(CXXFLAGS)
 	
 # scrypt-jane specific parameters
 DEFS+=-DSCRYPT_SALSA64 -DSCRYPT_SKEIN512
 
-xCXXFLAGS_SCRYPT_JANE=-O3 -march=native -msse2 -pthread -Wall -Wextra -Wformat -Wformat-security -Wno-unused-parameter \
-    $(DEBUGFLAGS) $(DEFS) $(HARDENING) $(CXXFLAGS)
+xCXXFLAGS_SCRYPT_JANE=-O2 -march=native -msse2 -pthread -Wall -Wextra -Wformat -Wformat-security -Wno-unused-parameter \
+    $(DEBUGFLAGS) $(DEFS) $(CXXFLAGS) $(HARDENING)
 
 # LDFLAGS can be specified on the make command line, so we use xLDFLAGS that only
 # adds some defaults in front. Unfortunately, LDFLAGS=... $(LDFLAGS) does not work.
-xLDFLAGS=$(LDHARDENING) $(LDFLAGS)
+xLDFLAGS=$(LDFLAGS) $(LDHARDENING)
 
 OBJS= \
     leveldb/libleveldb.a \
@@ -222,6 +222,8 @@ clean:
 	-rm -f obj/*.P
 	-rm -f obj-test/*.P
 	-rm -f obj/build.h
+	-rm -f hash/ar2/src/*.o
+	-rm -f hash/scrypt-jane/*.o
 	-cd leveldb && $(MAKE) clean || true
 
 FORCE:
